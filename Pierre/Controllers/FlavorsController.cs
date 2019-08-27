@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace Pierre.Controllers
 {
-    [Authorize]
+    // [Authorize]
     public class FlavorsController : Controller
     {
         private readonly PierreContext _db;

@@ -25,9 +25,12 @@ namespace Pierre
         {
             services.AddMvc();
 
-            services.AddEntityFrameworkMySql()
-              .AddDbContext<PierreContext>(options => options
-              .UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+                services.AddDbContext<MessagesServerContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
+            else
+                services.AddDbContext<MessagesServerContext>(options =>
+                        options.UseSqlite("Data Source=localdatabase.db"));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                       .AddEntityFrameworkStores<PierreContext>()
@@ -45,8 +48,10 @@ namespace Pierre
 
         public void Configure(IApplicationBuilder app)
         {
+            
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCookiePolicy();
             app.UseDeveloperExceptionPage();
 
             app.UseAuthentication();
